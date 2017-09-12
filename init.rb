@@ -7,23 +7,24 @@ Redmine::Plugin.register :redmine_include_macro_extension do
   author_url 'https://github.com/taikii'
 
   Redmine::WikiFormatting::Macros.register do
+
+    Redmine::WikiFormatting::Macros::Definitions.send :alias_method, "macro_include_original", "macro_include"
+
     desc "Includes a wiki page. Examples:\n\n" +
         "{{include(Foo)}}\n" +
         "{{include(Foo, Bar)}} -- to include Bar section of Foo page\n" +
         "{{include(projectname:Foo)}} -- to include a page of a specific project wiki"
     macro :include do |obj, args|
-      out = ''
-      page = Wiki.find_page(args.first.to_s, :project => @project)
-      raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
-      @included_wiki_pages ||= []
-
       if args.size == 1
-        raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title)
-        @included_wiki_pages << page.title
-        out = textilizable(page.content, :text, :attachments => page.attachments, :headings => false)
-        @included_wiki_pages.pop
+        args.push("DUMMY")
+        send("macro_include_original", obj, args)
       else
+        page = Wiki.find_page(args.first.to_s, :project => @project)
+        raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
+        @included_wiki_pages ||= []
+
         secname = args[1].to_s
+
         index = 0
         case Setting.text_formatting
         when "textile"
@@ -53,9 +54,8 @@ Redmine::Plugin.register :redmine_include_macro_extension do
         @included_wiki_pages << page.title + ':' + secname
         out = textilizable(sectext, :attachments => page.attachments, :headings => false)
         @included_wiki_pages.pop
+        out
       end
-
-      out
     end
   end
 end
