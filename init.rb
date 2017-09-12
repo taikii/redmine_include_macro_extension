@@ -47,12 +47,12 @@ Redmine::Plugin.register :redmine_include_macro_extension do
           sectext, hash = Redmine::WikiFormatting.formatter.new(page.content.text).get_section(index)
         end
 
-        if sectext
-          raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title) || @included_wiki_pages.include?(page.title + ':' + secname)
-          @included_wiki_pages << page.title + ':' + secname
-          out = textilizable(sectext, :attachments => page.attachments, :headings => false)
-          @included_wiki_pages.pop
-        end
+        raise 'Section not found' if sectext.nil?
+        raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title) || @included_wiki_pages.include?(page.title + ':' + secname)
+
+        @included_wiki_pages << page.title + ':' + secname
+        out = textilizable(sectext, :attachments => page.attachments, :headings => false)
+        @included_wiki_pages.pop
       end
 
       out
