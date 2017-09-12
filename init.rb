@@ -1,16 +1,16 @@
 Redmine::Plugin.register :redmine_include_macro_extension do
- name 'Include macro extension plugin'
- author 'Taiki I'
- description 'This plugin makes possible include wiki section.'
- version '0.0.2'
- url 'https://github.com/taikii/redmine_include_macro_extension'
- author_url 'https://github.com/taikii'
- 
- Redmine::WikiFormatting::Macros.register do
+  name 'Include macro extension plugin'
+  author 'Taiki IKEGAME'
+  description 'This plugin makes possible include wiki section.'
+  version '0.0.3'
+  url 'https://github.com/taikii/redmine_include_macro_extension'
+  author_url 'https://github.com/taikii'
+
+  Redmine::WikiFormatting::Macros.register do
     desc "Includes a wiki page. Examples:\n\n" +
-           "{{include(Foo)}}\n" +
-           "{{include(Foo, Bar)}} -- to include Bar section of Foo page\n" +
-           "{{include(projectname:Foo)}} -- to include a page of a specific project wiki"
+        "{{include(Foo)}}\n" +
+        "{{include(Foo, Bar)}} -- to include Bar section of Foo page\n" +
+        "{{include(projectname:Foo)}} -- to include a page of a specific project wiki"
     macro :include do |obj, args|
       out = ''
       page = Wiki.find_page(args.first.to_s, :project => @project)
@@ -54,9 +54,8 @@ Redmine::Plugin.register :redmine_include_macro_extension do
           @included_wiki_pages.pop
         end
       end
-      
+
       out
     end
- end
+  end
 end
-
