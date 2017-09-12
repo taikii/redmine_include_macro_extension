@@ -27,14 +27,14 @@ Redmine::Plugin.register :redmine_include_macro_extension do
         index = 0
         case Setting.text_formatting
         when "textile"
-          page.content.text.scan(/(?:\A|\r?\n\s*\r?\n)h\d+\.[ \t]+(.*?)(?:\r?\n\s*\r?\n|\z)/m).each.with_index(1) do |matched, i|
+          page.content.text.scan(/(?:\A|\r?\n\s*\r?\n)h\d+\.[ \t]+(.*?)(?=\r?\n\s*\r?\n|\z)/m).each.with_index(1) do |matched, i|
             if matched.first.gsub(/[\r\n]/, '') == secname
               index = i
               break
             end
           end
         when "markdown"
-          page.content.text.scan(/(?:\A|\r?\n)#+ +(.*?)(?:\r?\n|\z)/).each.with_index(1) do |matched, i|
+          page.content.text.scan(/(?:\A|\r?\n)#+ +(.*?)(?:\r?\n|\z)/m).each.with_index(1) do |matched, i|
             if matched.first.gsub(/[\r\n]/, '') == secname
               index = i
               break
