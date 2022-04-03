@@ -2,7 +2,7 @@ Redmine::Plugin.register :redmine_include_macro_extension do
   name 'Include macro extension plugin'
   author 'Taiki IKEGAME'
   description 'This plugin makes possible include wiki section.'
-  version '0.0.3'
+  version '0.0.4'
   url 'https://github.com/taikii/redmine_include_macro_extension'
   author_url 'https://github.com/taikii'
 
@@ -29,7 +29,7 @@ Redmine::Plugin.register :redmine_include_macro_extension do
         case Setting.text_formatting
         when "textile"
           regex = '(?:\A|\r?\n\s*\r?\n)h\d+\.[ \t]+(.*?)(?=\r?\n\s*\r?\n|\z)'
-        when "markdown"
+        when "markdown","common_mark"
           regex = '(?:\A|\r?\n)#+ +(.*?)(?=\r?\n|\z)'
         end
 
