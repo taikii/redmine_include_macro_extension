@@ -20,7 +20,13 @@ Redmine::Plugin.register :redmine_include_macro_extension do
         send("macro_include_original", obj, args)
       else
         page = Wiki.find_page(args.first.to_s, :project => @project)
-        raise 'Page not found' if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
+        if page.nil? || !User.current.allowed_to?(:view_wiki_pages, page.wiki.project)
+          if args.include?("noraise")
+            return ''
+          else
+            raise 'Page not found'
+          end
+        end
         @included_wiki_pages ||= []
 
         secname = args[1].to_s
@@ -48,7 +54,14 @@ Redmine::Plugin.register :redmine_include_macro_extension do
           sectext, hash = Redmine::WikiFormatting.formatter.new(page.content.text).get_section(index)
         end
 
-        raise 'Section not found' if sectext.nil?
+        if sectext.nil?
+          if args.include?("noraise")
+            return ''
+          else
+            raise 'Section not found'
+          end
+        end
+
         raise 'Circular inclusion detected' if @included_wiki_pages.include?(page.title) || @included_wiki_pages.include?(page.title + ':' + secname)
 
         if args.size > 2
@@ -66,9 +79,46 @@ Redmine::Plugin.register :redmine_include_macro_extension do
         end
 
         @included_wiki_pages << page.title + ':' + secname
+        out = ''.html_safe
         out = textilizable(sectext, :attachments => page.attachments, :headings => false)
         @included_wiki_pages.pop
         out
+      end
+    end
+
+    desc "Includes by table wiki pages. Examples:\n\n" +
+        "{{include(Section1, Section2)\n" +
+        "Page1\n" +
+        "Page2\n" +
+        "}}"
+    macro :include_by_table do |obj, args, text|
+      out = ''.html_safe
+      out << content_tag(:table) do
+        concat(content_tag(:thead) do
+          concat(content_tag(:tr) do
+            concat (content_tag(:th) do
+              concat l("label_wiki_page")
+            end)
+            args.each {|col|
+              concat (content_tag(:th) do
+                concat col
+              end)
+            }
+          end)
+        end)
+        text.lines.map(&:chomp).each {|line|
+          next if line.blank?
+            concat (content_tag(:tr) do
+              concat (content_tag(:td) do
+                concat textilizable("[[" + line + "]]")
+              end)
+              args.each {|col|
+                concat (content_tag(:td) do
+                  concat send("macro_include", obj, [line, col, "noheading", "nosubsection", "noraise"]).gsub(/[\r\n]/, '').html_safe
+                end)
+              }
+          end)
+        }
       end
     end
   end
