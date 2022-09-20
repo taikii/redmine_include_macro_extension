@@ -31,19 +31,28 @@ Both of the below codes give the same result.
 
 ```
 {{include_by_table(Sec1, Sec2)
-Child1
-Child2
-Child3
+Page1
+Page2
+Page3
 }}
 ```
 
 ```
-|_. Wiki page |_. Sec1 |_. Sec2 |
+|_.           |_. Sec1 |_. Sec2 |
 | [[Child1]]  | {{include(Child1, Sec1, noheading, nosubsection, noraise)}} | {{include(Child1, Sec2, noheading, nosubsection, noraise)}} |
 | [[Child2]]  | {{include(Child2, Sec1, noheading, nosubsection, noraise)}} | {{include(Child2, Sec2, noheading, nosubsection, noraise)}} |
 | [[Child3]]  | {{include(Child3, Sec1, noheading, nosubsection, noraise)}} | {{include(Child3, Sec2, noheading, nosubsection, noraise)}} |
 ```
 ![Example2](doc/images/example_3.png)
+
+### Example: Include pages in transpose table.
+
+```
+{{include_by_table_transpose(Page1, Page2, Page3)
+Sec1
+Sec2
+}}
+```
 
 ## Installation
 1. Clone or copy files into the Redmine plugins directory
