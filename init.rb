@@ -2,7 +2,7 @@ Redmine::Plugin.register :redmine_include_macro_extension do
   name 'Include macro extension plugin'
   author 'Taiki IKEGAME'
   description 'This plugin makes possible include wiki section.'
-  version '1.0.5'
+  version '1.0.6'
   url 'https://github.com/taikii/redmine_include_macro_extension'
   author_url 'https://github.com/taikii'
 
