@@ -87,7 +87,7 @@ Redmine::Plugin.register :redmine_include_macro_extension do
     end
 
     desc "Includes by table wiki pages. Examples:\n\n" +
-        "{{include(Section1, Section2)\n" +
+        "{{include_by_table(Section1, Section2)\n" +
         "Page1\n" +
         "Page2\n" +
         "}}"
