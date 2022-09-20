@@ -96,9 +96,7 @@ Redmine::Plugin.register :redmine_include_macro_extension do
       out << content_tag(:table) do
         concat(content_tag(:thead) do
           concat(content_tag(:tr) do
-            concat (content_tag(:th) do
-              concat l("label_wiki_page")
-            end)
+            concat (content_tag(:th))
             args.each {|col|
               concat (content_tag(:th) do
                 concat col
@@ -115,6 +113,40 @@ Redmine::Plugin.register :redmine_include_macro_extension do
               args.each {|col|
                 concat (content_tag(:td) do
                   concat send("macro_include", obj, [line, col, "noheading", "nosubsection", "noraise"]).gsub(/[\r\n]/, '').html_safe
+                end)
+              }
+          end)
+        }
+      end
+    end
+
+    desc "Includes by table wiki pages. Examples:\n\n" +
+    "{{include_by_table_transpose(Page1, Page2)\n" +
+    "Section1\n" +
+    "Section2\n" +
+    "}}"
+    macro :include_by_table_transpose do |obj, args, text|
+      out = ''.html_safe
+      out << content_tag(:table) do
+        concat(content_tag(:thead) do
+          concat(content_tag(:tr) do
+            concat (content_tag(:th))
+            args.each {|col|
+              concat (content_tag(:th) do
+                concat textilizable("[[" + col + "]]")
+              end)
+            }
+          end)
+        end)
+        text.lines.map(&:chomp).each {|line|
+          next if line.blank?
+            concat (content_tag(:tr) do
+              concat (content_tag(:td) do
+                concat line
+              end)
+              args.each {|col|
+                concat (content_tag(:td) do
+                  concat send("macro_include", obj, [col, line, "noheading", "nosubsection", "noraise"]).gsub(/[\r\n]/, '').html_safe
                 end)
               }
           end)
